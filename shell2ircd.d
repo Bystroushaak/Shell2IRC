@@ -15,6 +15,7 @@ import frozenidea2;
 
 class ShellToIRC : IRCbot{
 	private Socket listener;
+	private string[][string] on_join_queue;
 	
 	this(string nickname){
 		super(nickname);
@@ -76,7 +77,7 @@ class ShellToIRC : IRCbot{
 						this.sendMsg("#testchan", local_msg);
 					}catch(Exception){
 						this.join("#testchan");
-						this.sendMsg("#testchan", local_msg);
+						this.on_join_queue["#testchan"] ~= local_msg;
 					}
 					
 					local_buff.clear();
@@ -122,6 +123,16 @@ class ShellToIRC : IRCbot{
 				}
 			}
 		}
+	}
+	
+	override public void onServerConnected(){
+		writeln("Connected to server.");
+	}
+	
+	override public void onChannelJoin(string chan){
+		if (chan in this.on_join_queue)
+			foreach(msg; this.on_join_queue[chan])
+				this.sendMsg(chan, msg);
 	}
 }
 
