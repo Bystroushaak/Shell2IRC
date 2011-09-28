@@ -1,5 +1,14 @@
 /**
- * Shell to IRC redirector. 
+ * Shell to IRC redirector. Daemon part.
+ * 
+ * This program listen on selected port and wait for commands. Every command is
+ * send to IRC.
+ * 
+ * Command format:
+ *    for:msg\n
+ * 
+ *    'for' could be channel name, or IRC username.
+ *    'msg' ends with \n
 */ 
 
 
@@ -9,7 +18,7 @@ import std.string;
 import std.algorithm : remove;
 import std.getopt;
 
-import frozenidea2;
+import frozenidea2; /// https://github.com/Bystroushaak/FrozenIdea2
 
 
 
@@ -17,11 +26,22 @@ class ShellToIRC : IRCbot{
 	private Socket listener;
 	private string[][string] on_join_queue;
 	
-	this(string nickname){
+	///
+	this(string nickname = "Shell2IRC"){
 		super(nickname);
 	}
 	
+	///
+	this(string nickname, ushort local_port, string server, ushort irc_port = 6667){
+		this(nickname);
+		this.connect_shell(local_port, server, irc_port);
+	}
+	
+	/**
+	 * Connects server to local port and bot to IRC.
+	*/ 
 	public void connect_shell(ushort local_port, string server, ushort irc_port = 6667){
+		// local connection
 		this.listener = new TcpSocket();
 		this.listener.blocking = false;
 		this.listener.bind(new InternetAddress(local_port));
@@ -71,14 +91,21 @@ class ShellToIRC : IRCbot{
 				local_read = local_connections[i].receive(local_buff);
 				if (local_read != 0 && local_read != Socket.ERROR){
 					string local_msg = std.conv.to!string(local_buff[0 .. local_read]);
-					// local queue :S - ta to fixne
 					
-					try{
-						this.sendMsg("#testchan", local_msg);
-					}catch(Exception){
-						this.join("#testchan");
-						this.on_join_queue["#testchan"] ~= local_msg;
-					}
+					// parse msg/chan
+					string chan = local_msg[0 .. local_msg.indexOf(" ")];
+					local_msg = local_msg[chan.length + 1 .. $];
+					
+					// chan or private msg
+					if (chan.startsWith("#")){
+						try{
+							this.sendMsg(chan, local_msg);
+						}catch(Exception){
+							this.join(chan);
+							this.on_join_queue[chan] ~= local_msg;
+						}
+					}else
+						this.sendPrivateMsg(chan, local_msg);
 					
 					local_buff.clear();
 				}
@@ -156,7 +183,7 @@ void printHelp(string progname, ref File o = stderr){
 
 int main(string[] args){
 	bool help;
-	string nick = "FrozenIdea2";
+	string nick = "Shell2IRC";
 	ushort local_port, irc_port;
 	string server;
 	
