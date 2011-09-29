@@ -1,0 +1,15 @@
+# Shell2IRC (URL) configuration file.
+#
+# Variables:
+#   IRC_SERVER
+#   IRC_PORT
+#   LOCAL_PORT
+#
+# Format:
+#   VARIABLE = VALUE # optional comment \n
+#
+# Example:
+#
+# IRC_SERVER = irc.2600.net
+# IRC_PORT   = 6667
+# LOCAL_PORT = 2222
