@@ -1,5 +1,5 @@
 /**
- * Shell to IRC redirector. Daemon part.
+ * Shell to IRC (daemon).
  * 
  * This program listen on selected port and wait for commands. Every command is
  * send to IRC.
@@ -9,6 +9,15 @@
  * 
  *    'for' could be channel name, or IRC username.
  *    'msg' ends with \n
+ * 
+ * 
+ * Author:  Bystroushaak (bystrousak@kitakitsune.org)
+ * Version: 1.0.0
+ * Date:    29.09.2011
+ * 
+ * Copyright: 
+ *     This work is licensed under a CC BY.
+ *     http://creativecommons.org/licenses/by/3.0/
 */ 
 
 
@@ -167,7 +176,7 @@ class ShellToIRC : IRCbot{
 void printHelp(string progname, ref File o = stderr){
 	o.writeln("Usage:");
 	o.writeln(
-		"\t" ~ progname ~ " [-h, -n, --nick] LOCAL_PORT IRC_SERVER IRC_PORT\n\n"
+		"\t" ~ progname ~ " [-h, --help, -n, --nick] LOCAL_PORT IRC_SERVER IRC_PORT\n\n"
 		"\t-n, --nick\n"
 		"\t\tBot nick. Default is FrozenIdea2.\n\n"
 		"\tLOCAL_PORT\n"
@@ -200,7 +209,7 @@ int main(string[] args){
 		return -1;
 	}
 	if (help){
-		writeln("Shell to IRC redirector Daemon by Bystroushaak (bystrousak@kitakitsune.org)\n");
+		writeln("Shell to IRC redirector (daemon) by Bystroushaak (bystrousak@kitakitsune.org)\n");
 		printHelp(args[0], stdout);
 		writeln(args);
 		return 0;
