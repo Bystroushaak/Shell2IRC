@@ -1,1 +1,3 @@
 Přidělat možnost spustit s konfiguračním souborem (odpadnou cesty).
+Doplnit url na github do konfiguráku.
+Přidělat switche na parsování konfiguráku, odstranit nepotřebné switche
