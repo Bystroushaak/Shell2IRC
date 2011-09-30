@@ -85,7 +85,8 @@ class Config{
 	
 	string toString(){
 		return "Local port: " ~ std.conv.to!string(this.local_port) ~ 
-		       "\nServer: " ~ server ~ ":" ~ std.conv.to!string(this.irc_port) ~ "\n";
+		       "\nServer: " ~ this.server ~ ":" ~ std.conv.to!string(this.irc_port) ~ 
+		       "\nNick: " ~ this.nick ~ "\n";
 	}
 }
 
