@@ -18,14 +18,17 @@ import std.socket;
 void printHelp(string progname, ref File o = stderr){
 	o.writeln(
 		"Usage:\n"
-		"\t" ~ progname ~ " [-h, --help, -m, --msg] -t TO\n\n"
+		"\t" ~ progname ~ " [-h, --help, -m, --msg, -c] -t TO\n\n"
 		"\t-t, --to\n"
 		"\t\tMessage recipient. Could be chan or user (sent as PM).\n\n"
 		"Optional parameters:\n"
 		"\t-m, --msg\n"
 		"\t\tMessage. If not set, message is readed from stdin.\n\n"
 		"\t-h, --help\n"
-		"\t\tPrint this help.\n"
+		"\t\tPrint this help.\n\n"
+		"\t-c CONFIG_FILE\n"
+		"\t\tConfiguration file. If not set, program expects shell2irc.cfg\n"
+		"\t\tin ./, or in ~.\n"
 	);
 }
 

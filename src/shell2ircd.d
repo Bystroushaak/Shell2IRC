@@ -176,15 +176,9 @@ class ShellToIRC : IRCbot{
 void printHelp(string progname, ref File o = stderr){
 	o.writeln("Usage:");
 	o.writeln(
-		"\t" ~ progname ~ " [-h, --help, -n, --nick] LOCAL_PORT IRC_SERVER IRC_PORT\n\n"
-		"\t-n, --nick\n"
-		"\t\tBot nick. Default is FrozenIdea2.\n\n"
-		"\tLOCAL_PORT\n"
-		"\t\tLocal port where daemon wait for commands.\n\n"
-		"\tIRC_SERVER\n"
-		"\t\tIRC server. SSL is not supported.\n\n"
-		"\tIRC_PORT\n"
-		"\t\tIRC port.\n\n"
+		"\t" ~ progname ~ " [-h, --help, -c, --config]\n\n"
+		"\t-c, --config\n"
+		"\t\tConfiguration file path.\n\n"
 	);
 }
 
@@ -192,9 +186,7 @@ void printHelp(string progname, ref File o = stderr){
 
 int main(string[] args){
 	bool help;
-	string nick = "Shell2IRC";
-	ushort local_port, irc_port;
-	string server;
+	string config;
 	
 	// parse options
 	try{
@@ -202,7 +194,7 @@ int main(string[] args){
 			args,
 			std.getopt.config.bundling,
 			"help|h", &help,
-			"nick|n", &nick
+			"config|c", &config
 		);
 	}catch(Exception e){
 		writeln(e.msg);
@@ -213,28 +205,6 @@ int main(string[] args){
 		printHelp(args[0], stdout);
 		writeln(args);
 		return 0;
-	}	
-	if (args.length != 4){
-		stderr.writeln("You have to specify all position arguments!");
-		return 1;
-	}
-	try{
-		local_port = std.conv.to!ushort(args[1]);
-		
-		if (local_port < 1 || local_port > 65535)
-			throw new Exception("");
-	}catch(Exception){
-		stderr.writeln("LOCAL_PORT must be number from 1 to 65535 and not '" ~ args[1] ~ "'!");
-		return 2;
-	}
-	try{
-		irc_port = std.conv.to!ushort(args[3]);
-		
-		if (irc_port < 1 || irc_port > 65535)
-			throw new Exception("");
-	}catch(Exception){
-		stderr.writeln("IRC_PORT must be number from 1 to 65535 and not '" ~ args[3] ~ "'!");
-		return 3;
 	}
 	
 	ShellToIRC s = new ShellToIRC(nick);
