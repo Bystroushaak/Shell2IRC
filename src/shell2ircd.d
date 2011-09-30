@@ -12,7 +12,7 @@
  * 
  * 
  * Author:  Bystroushaak (bystrousak@kitakitsune.org)
- * Version: 1.0.0
+ * Version: 1.0.1
  * Date:    30.09.2011
  * 
  * Copyright: 
@@ -75,6 +75,13 @@ class ShellToIRC : IRCbot{
 		int io_endl;
 		string msg;
 		string msg_queue;
+		
+		// send user information
+		if (this.password != "")
+			this.socketSendLine("PASS " ~ this.password);
+		
+		this.socketSendLine("USER " ~ this.nickname ~ " 0 0 :" ~ this.real_name);
+		this.socketSendLine("NICK " ~ this.nickname);
 		
 		// connection loop
 		for (;;chk.reset()){
@@ -204,7 +211,6 @@ int main(string[] args){
 	if (help){
 		writeln("Shell to IRC redirector (daemon) by Bystroushaak (bystrousak@kitakitsune.org)\n");
 		printHelp(args[0], stdout);
-		writeln(args);
 		return 0;
 	}
 	
