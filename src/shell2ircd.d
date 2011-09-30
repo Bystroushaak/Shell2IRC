@@ -5,7 +5,7 @@
  * send to IRC.
  * 
  * Command format:
- *    for:msg\n
+ *    for msg\n
  * 
  *    'for' could be channel name, or IRC username.
  *    'msg' ends with \n
@@ -13,7 +13,7 @@
  * 
  * Author:  Bystroushaak (bystrousak@kitakitsune.org)
  * Version: 1.0.0
- * Date:    29.09.2011
+ * Date:    30.09.2011
  * 
  * Copyright: 
  *     This work is licensed under a CC BY.
@@ -28,7 +28,7 @@ import std.algorithm : remove;
 import std.getopt;
 
 import frozenidea2; /// https://github.com/Bystroushaak/FrozenIdea2
-
+import read_configuration;
 
 
 class ShellToIRC : IRCbot{
@@ -187,6 +187,7 @@ void printHelp(string progname, ref File o = stderr){
 int main(string[] args){
 	bool help;
 	string config;
+	Config c;
 	
 	// parse options
 	try{
@@ -207,10 +208,21 @@ int main(string[] args){
 		return 0;
 	}
 	
-	ShellToIRC s = new ShellToIRC(nick);
 	
 	try{
-		s.connect_shell(local_port, args[2], irc_port);
+		if (config != "")
+			c = readConfig(config);
+		else
+			c = readConfig();
+	}catch(Exception e){
+		stderr.writeln(e.msg);
+		return 30;
+	}
+	
+	ShellToIRC s = new ShellToIRC(c.nick);
+	
+	try{
+		s.connect_shell(c.local_port, c.server, c.irc_port);
 	}catch(std.socket.AddressException e){
 		stderr.writeln(e.msg);
 		return 10;
