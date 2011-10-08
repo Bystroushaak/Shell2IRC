@@ -154,8 +154,6 @@ class ShellToIRC : IRCbot{
 					while ((io_endl = msg_queue.indexOf(ENDL)) > 0){
 						msg = msg_queue[0 .. io_endl + ENDL.length];
 						
-						writeln(msg);
-						
 						// ping handling
 						if (msg.startsWith("PING"))
 							this.socketSendLine("PONG " ~ msg.split()[1].strip());
