@@ -12,8 +12,8 @@
  * 
  * 
  * Author:  Bystroushaak (bystrousak@kitakitsune.org)
- * Version: 1.0.1
- * Date:    30.09.2011
+ * Version: 1.1.0
+ * Date:    08.10.2011
  * 
  * Copyright: 
  *     This work is licensed under a CC BY.
@@ -73,8 +73,8 @@ class ShellToIRC : IRCbot{
 		char local_buff[1024];
 		
 		int io_endl;
-		string msg;
-		string msg_queue;
+		string msg, local_msg;
+		string msg_queue, lmsg_queue;
 		
 		// send user information
 		if (this.password != "")
@@ -106,22 +106,32 @@ class ShellToIRC : IRCbot{
 				
 				local_read = local_connections[i].receive(local_buff);
 				if (local_read != 0 && local_read != Socket.ERROR){
-					string local_msg = std.conv.to!string(local_buff[0 .. local_read]);
+					lmsg_queue ~= std.conv.to!string(local_buff[0 .. local_read]);
 					
-					// parse msg/chan
-					string chan = local_msg[0 .. local_msg.indexOf(" ")];
-					local_msg = local_msg[chan.length + 1 .. $];
-					
-					// chan or private msg
-					if (chan.startsWith("#")){
-						try{
-							this.sendMsg(chan, local_msg);
-						}catch(Exception){
-							this.join(chan);
-							this.on_join_queue[chan] ~= local_msg;
-						}
-					}else
-						this.sendPrivateMsg(chan, local_msg);
+					while ((io_endl = lmsg_queue.indexOf("\n")) > 0){
+						local_msg = lmsg_queue[0 .. io_endl + 1];
+						
+						// parse msg/chan
+						string chan = local_msg[0 .. local_msg.indexOf(" ")];
+						local_msg = local_msg[chan.length + 1 .. $];
+						
+						// chan or private msg
+						if (chan.startsWith("#")){
+							try{
+								this.sendMsg(chan, local_msg);
+							}catch(Exception){
+								this.join(chan);
+								this.on_join_queue[chan] ~= local_msg;
+							}
+						}else
+							this.sendPrivateMsg(chan, local_msg);
+							
+						// remove message from queue
+						if (local_msg.length <= lmsg_queue.length - 1)
+							lmsg_queue = lmsg_queue[chan.length + 1 + local_msg.length .. $];
+						else
+							lmsg_queue = "";
+					}
 					
 					local_buff.clear();
 				}
@@ -143,6 +153,8 @@ class ShellToIRC : IRCbot{
 					// handle messages in queue
 					while ((io_endl = msg_queue.indexOf(ENDL)) > 0){
 						msg = msg_queue[0 .. io_endl + ENDL.length];
+						
+						writeln(msg);
 						
 						// ping handling
 						if (msg.startsWith("PING"))
