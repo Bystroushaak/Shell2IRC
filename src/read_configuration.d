@@ -2,8 +2,8 @@
  * Configuration reader
  * 
  * Author:  Bystroushaak (bystrousak@kitakitsune.org)
- * Version: 1.0.0
- * Date:    29.09.2011
+ * Version: 1.1.0
+ * Date:    08.10.2011
  * 
  * Copyright: 
  *     This work is licensed under a CC BY.
@@ -103,8 +103,10 @@ Config readConfig(string FN = "shell2irc.cfg"){
 		filename = "./" ~ FN;
 	else if (exists(std.path.expandTilde("~/" ~ FN)))
 		filename = std.path.expandTilde("~/" ~ FN);
+	else if (exists(FN))
+		filename = FN;
 	else
-		throw new Exception("Filename not found!");
+		throw new Exception("Filename '" ~ FN ~ "' not found!");
 	
 	return new Config(filename);
 }
