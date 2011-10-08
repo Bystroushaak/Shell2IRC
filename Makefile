@@ -7,7 +7,7 @@ MODULES = modules
 CONFIG  = shell2irc.cfg
 
 
-all: download $(CLIENT) $(DAEMON)
+all: download $(CLIENT) $(DAEMON) strip
 	-mkdir build
 	-cp $(CLIENT) build/
 	-cp $(DAEMON) build/
@@ -26,6 +26,10 @@ $(CLIENT): src/$(CLIENT).d src/read_configuration.d
 
 $(DAEMON): src/$(DAEMON).d $(MODULES)/frozenidea2.d src/read_configuration.d
 	$(DC) $(CFLAGS) $^
+
+strip:
+	strip $(CLIENT)
+	strip $(DAEMON)
 
 clean:
 	-rm $(CLIENT)
